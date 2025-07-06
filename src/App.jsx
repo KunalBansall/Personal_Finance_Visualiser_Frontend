@@ -5,9 +5,9 @@ import StatsCard from './components/StatsCard';
 import MonthlyChart from './components/MonthlyChart';
 import TransactionsTable from './components/TransactionsTable';
 import TransactionModal from './components/TransactionModal';
+import Dashboard from './components/Dashboard';
+import API_BASE_URL from './utils/api';
 import './App.css';
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://personal-finance-visualiser-backend.onrender.com/api';
 
 function App() {
   const [transactions, setTransactions] = useState([]);
@@ -16,17 +16,19 @@ function App() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState(null);
+  const [activeTab, setActiveTab] = useState('dashboard');
 
   // Fetch all transactions
   const fetchTransactions = async () => {
     try {
       setLoading(true);
       const response = await axios.get(`${API_BASE_URL}/transactions`);
-      setTransactions(response.data);
+      setTransactions(Array.isArray(response.data) ? response.data : []);
       setError(null);
     } catch (err) {
       setError('Failed to fetch transactions');
       console.error('Error fetching transactions:', err);
+      setTransactions([]); // Ensure transactions is always an array
     } finally {
       setLoading(false);
     }
@@ -39,7 +41,7 @@ function App() {
         ...transactionData,
         amount: parseFloat(transactionData.amount)
       });
-      setTransactions([response.data, ...transactions]);
+      setTransactions([response.data, ...(Array.isArray(transactions) ? transactions : [])]);
       setError(null);
       return response.data;
     } catch (err) {
@@ -56,7 +58,7 @@ function App() {
         ...transactionData,
         amount: parseFloat(transactionData.amount)
       });
-      setTransactions(transactions.map(t => t._id === id ? response.data : t));
+      setTransactions((Array.isArray(transactions) ? transactions : []).map(t => t._id === id ? response.data : t));
       setError(null);
       return response.data;
     } catch (err) {
@@ -70,7 +72,7 @@ function App() {
   const deleteTransaction = async (id) => {
     try {
       await axios.delete(`${API_BASE_URL}/transactions/${id}`);
-      setTransactions(transactions.filter(t => t._id !== id));
+      setTransactions((Array.isArray(transactions) ? transactions : []).filter(t => t._id !== id));
       setError(null);
     } catch (err) {
       setError('Failed to delete transaction');
@@ -81,6 +83,8 @@ function App() {
 
   // Calculate monthly totals for chart
   const getMonthlyData = () => {
+    if (!Array.isArray(transactions)) return [];
+    
     const monthlyTotals = {};
     transactions.forEach(transaction => {
       const date = new Date(transaction.date);
@@ -94,10 +98,10 @@ function App() {
   };
 
   // Calculate total expenses
-  const totalExpenses = transactions.reduce((sum, t) => sum + t.amount, 0);
+  const totalExpenses = Array.isArray(transactions) ? transactions.reduce((sum, t) => sum + t.amount, 0) : 0;
 
   // Calculate monthly average
-  const monthlyAverage = transactions.length > 0 
+  const monthlyAverage = Array.isArray(transactions) && transactions.length > 0 
     ? totalExpenses / Math.max(1, new Set(transactions.map(t => new Date(t.date).toISOString().slice(0, 7))).size)
     : 0;
 
@@ -157,6 +161,32 @@ function App() {
           </p>
         </div>
 
+        {/* Tab Navigation */}
+        <div className="flex justify-center mb-8">
+          <div className="flex space-x-1 bg-white p-1 rounded-lg shadow-sm">
+            <button
+              onClick={() => setActiveTab('dashboard')}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                activeTab === 'dashboard'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Dashboard
+            </button>
+            <button
+              onClick={() => setActiveTab('transactions')}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                activeTab === 'transactions'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Transactions
+            </button>
+          </div>
+        </div>
+
         {/* Error Alert */}
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 flex justify-between items-center">
@@ -172,35 +202,42 @@ function App() {
           </div>
         )}
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-          <StatsCard 
-            title="Total Transactions" 
-            value={transactions.length} 
-          />
-          <StatsCard 
-            title="Total Expenses" 
-            value={`₹${totalExpenses.toFixed(2)}`} 
-          />
-          <StatsCard 
-            title="Monthly Average" 
-            value={`₹${monthlyAverage.toFixed(2)}`}
-            className="sm:col-span-2 md:col-span-1"
-          />
-        </div>
+        {/* Content based on active tab */}
+        {activeTab === 'dashboard' ? (
+          <Dashboard />
+        ) : (
+          <>
+            {/* Stats */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+              <StatsCard 
+                title="Total Transactions" 
+                value={Array.isArray(transactions) ? transactions.length : 0} 
+              />
+              <StatsCard 
+                title="Total Expenses" 
+                value={`₹${totalExpenses.toFixed(2)}`} 
+              />
+              <StatsCard 
+                title="Monthly Average" 
+                value={`₹${monthlyAverage.toFixed(2)}`}
+                className="sm:col-span-2 md:col-span-1"
+              />
+            </div>
 
-        {/* Monthly Chart */}
-        <div className="grid grid-cols-1 gap-8 mb-8">
-          <MonthlyChart data={getMonthlyData()} />
-        </div>
+            {/* Monthly Chart */}
+            <div className="grid grid-cols-1 gap-8 mb-8">
+              <MonthlyChart data={getMonthlyData()} />
+            </div>
 
-        {/* Transactions Table */}
-        <TransactionsTable
-          transactions={transactions}
-          loading={loading}
-          onEdit={handleEdit}
-          onDelete={handleDeleteTransaction}
-        />
+            {/* Transactions Table */}
+            <TransactionsTable
+              transactions={Array.isArray(transactions) ? transactions : []}
+              loading={loading}
+              onEdit={handleEdit}
+              onDelete={handleDeleteTransaction}
+            />
+          </>
+        )}
 
         {/* Add Transaction Modal */}
         <TransactionModal

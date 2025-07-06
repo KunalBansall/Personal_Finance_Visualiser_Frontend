@@ -47,6 +47,9 @@ const TransactionsTable = ({
                   Description
                 </th>
                 <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Category
+                </th>
+                <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Amount
                 </th>
                 <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -62,6 +65,11 @@ const TransactionsTable = ({
                   </td>
                   <td className="px-3 sm:px-4 py-3 text-sm text-gray-900">
                     {transaction.description}
+                  </td>
+                  <td className="px-3 sm:px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      {transaction.category || 'Others'}
+                    </span>
                   </td>
                   <td className="px-3 sm:px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
                     ₹{transaction.amount.toFixed(2)}

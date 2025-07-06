@@ -1,12 +1,14 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 
 const transactionSchema = z.object({
   amount: z.number().positive('Amount must be positive'),
   date: z.string().min(1, 'Date is required'),
-  description: z.string().min(1, 'Description is required')
+  description: z.string().min(1, 'Description is required'),
+  category: z.string().min(1, 'Category is required')
 });
 
 const TransactionModal = ({ 
@@ -17,7 +19,7 @@ const TransactionModal = ({
   submitText, 
   initialData = null 
 }) => {
-  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm({
+  const { register, handleSubmit, reset, setValue, control, formState: { errors } } = useForm({
     resolver: zodResolver(transactionSchema)
   });
 
@@ -27,6 +29,7 @@ const TransactionModal = ({
       setValue('amount', initialData.amount);
       setValue('date', initialData.date.split('T')[0]);
       setValue('description', initialData.description);
+      setValue('category', initialData.category);
     } else if (isOpen) {
       reset();
     }
@@ -102,6 +105,34 @@ const TransactionModal = ({
             />
             {errors.description && (
               <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Category
+            </label>
+            <Controller
+              name="category"
+              control={control}
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Food">Food</SelectItem>
+                    <SelectItem value="Rent">Rent</SelectItem>
+                    <SelectItem value="Bills">Bills</SelectItem>
+                    <SelectItem value="Shopping">Shopping</SelectItem>
+                    <SelectItem value="Travel">Travel</SelectItem>
+                    <SelectItem value="Others">Others</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.category && (
+              <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>
             )}
           </div>
 
