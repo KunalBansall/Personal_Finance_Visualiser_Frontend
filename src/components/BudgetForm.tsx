@@ -4,6 +4,8 @@ import { Card, CardContent } from './ui/card';
 import { Input as _Input } from './ui/input.js';
 import { Select as _Select, SelectItem as _SelectItem, SelectContent as _SelectContent, SelectTrigger as _SelectTrigger } from './ui/select.jsx';
 import { Button as _Button } from './ui/button.js';
+// @ts-ignore
+import API_BASE_URL from '../utils/api';
 
 const Input = _Input as any;
 const Select = _Select as any;
@@ -20,7 +22,7 @@ export default function BudgetForm() {
   const [amount, setAmount] = useState('');
 
   const handleSubmit = async () => {
-    await axios.post('/api/budgets', {
+    await axios.post(`${API_BASE_URL}/budgets`, {
       category,
       amount: Number(amount),
       month,

@@ -4,6 +4,8 @@ import axios from 'axios';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
+// @ts-ignore
+import API_BASE_URL from '../utils/api';
 
 const currentMonth = new Date().toISOString().slice(0, 7);
 
@@ -11,7 +13,7 @@ export default function BudgetVsActualChart() {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
-    axios.get(`/api/budgets/budget-vs-actual?month=${currentMonth}`)
+    axios.get(`${API_BASE_URL}/budgets/budget-vs-actual?month=${currentMonth}`)
       .then(res => {
         console.log('BudgetVsActualChart API response:', res.data);
         if (Array.isArray(res.data)) {
