@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Card, CardContent } from './ui/card';
+// @ts-ignore
 import { Badge } from './ui/badge';
+// @ts-ignore
+import API_BASE_URL from '../utils/api';
 
 const currentMonth = new Date().toISOString().slice(0, 7);
 
@@ -15,7 +18,7 @@ export default function InsightsCard() {
   const [insights, setInsights] = useState<Insight[]>([]);
 
   useEffect(() => {
-    axios.get(`/api/budgets/budget-vs-actual?month=${currentMonth}`)
+    axios.get(`${API_BASE_URL}/budgets/budget-vs-actual?month=${currentMonth}`)
       .then(res => {
         console.log('InsightsCard API response:', res.data);
         if (Array.isArray(res.data)) {
