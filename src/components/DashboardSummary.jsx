@@ -108,34 +108,36 @@ const DashboardSummary = ({ summary, loading = false }) => {
                 No recent transactions
               </div>
             ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Date</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentTransactions.map((transaction) => (
-                    <TableRow key={transaction._id}>
-                      <TableCell className="font-medium">
-                        {transaction.description}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="secondary">
-                          {transaction.category || 'Others'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>₹{transaction.amount.toFixed(2)}</TableCell>
-                      <TableCell>
-                        {new Date(transaction.date).toLocaleDateString()}
-                      </TableCell>
+              <div className="w-full max-w-full overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Description</TableHead>
+                      <TableHead>Category</TableHead>
+                      <TableHead>Amount</TableHead>
+                      <TableHead>Date</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {recentTransactions.map((transaction) => (
+                      <TableRow key={transaction._id}>
+                        <TableCell className="font-medium">
+                          {transaction.description}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="secondary">
+                            {transaction.category || 'Others'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>₹{transaction.amount.toFixed(2)}</TableCell>
+                        <TableCell>
+                          {new Date(transaction.date).toLocaleDateString()}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             )}
           </CardContent>
         </Card>

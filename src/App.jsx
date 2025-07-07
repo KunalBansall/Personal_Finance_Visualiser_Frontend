@@ -147,10 +147,8 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
-        {/* Floating Add Button */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-8 relative">
         <FloatingAddButton onClick={() => setShowAddModal(true)} />
-
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
@@ -230,12 +228,14 @@ function App() {
             </div>
 
             {/* Transactions Table */}
-            <TransactionsTable
-              transactions={Array.isArray(transactions) ? transactions : []}
-              loading={loading}
-              onEdit={handleEdit}
-              onDelete={handleDeleteTransaction}
-            />
+            <div className="w-full max-w-full overflow-x-auto">
+              <TransactionsTable
+                transactions={Array.isArray(transactions) ? transactions : []}
+                loading={loading}
+                onEdit={handleEdit}
+                onDelete={handleDeleteTransaction}
+              />
+            </div>
           </>
         )}
 

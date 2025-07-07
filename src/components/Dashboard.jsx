@@ -1,7 +1,11 @@
+import React from 'react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import DashboardSummary from './DashboardSummary';
 import API_BASE_URL from '../utils/api';
+import BudgetForm from './BudgetForm';
+import BudgetVsActualChart from './BudgetVsActualChart';
+import InsightsCard from './InsightsCard';
 
 const Dashboard = () => {
   const [summary, setSummary] = useState(null);
@@ -42,6 +46,15 @@ const Dashboard = () => {
       )}
       
       <DashboardSummary summary={summary} loading={loading} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-12 p-4">
+        <BudgetForm />
+        <div className="md:col-span-2">
+          <BudgetVsActualChart />
+        </div>
+        <div className="md:col-span-2">
+          <InsightsCard />
+        </div>
+      </div>
     </div>
   );
 };

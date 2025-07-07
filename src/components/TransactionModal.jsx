@@ -32,6 +32,7 @@ const TransactionModal = ({
       setValue('category', initialData.category);
     } else if (isOpen) {
       reset();
+      setValue('date', new Date().toISOString().slice(0, 10));
     }
   }, [isOpen, initialData, setValue, reset]);
 
