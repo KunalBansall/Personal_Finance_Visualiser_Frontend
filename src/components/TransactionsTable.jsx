@@ -60,7 +60,7 @@ const TransactionsTable = ({
             {transactions.map((transaction) => (
               <tr key={transaction._id} className="hover:bg-gray-50">
                 <td className="px-3 sm:px-4 py-3 whitespace-nowrap text-sm text-gray-900">
-                  {new Date(transaction.date).toLocaleDateString()}
+                  {new Date(transaction.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </td>
                 <td className="px-3 sm:px-4 py-3 text-sm text-gray-900">
                   {transaction.description}

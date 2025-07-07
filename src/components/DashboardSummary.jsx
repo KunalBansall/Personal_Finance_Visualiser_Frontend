@@ -131,7 +131,7 @@ const DashboardSummary = ({ summary, loading = false }) => {
                         </TableCell>
                         <TableCell>₹{transaction.amount.toFixed(2)}</TableCell>
                         <TableCell>
-                          {new Date(transaction.date).toLocaleDateString()}
+                          {new Date(transaction.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                         </TableCell>
                       </TableRow>
                     ))}
