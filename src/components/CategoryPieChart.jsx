@@ -7,6 +7,24 @@ const COLORS = [
   '#82CA9D', '#FFC658', '#FF6B6B', '#4ECDC4', '#45B7D1'
 ];
 
+// Custom legend renderer
+const renderCustomLegend = (props) => {
+  const { payload } = props;
+  return (
+    <ul className="flex flex-wrap justify-center mt-4">
+      {payload.map((entry, index) => (
+        <li key={`item-${index}`} className="flex items-center mx-3 my-1">
+          <span
+            className="inline-block w-4 h-4 rounded mr-2"
+            style={{ backgroundColor: entry.color }}
+          ></span>
+          <span className="text-sm">{entry.payload.category}</span>
+        </li>
+      ))}
+    </ul>
+  );
+};
+
 const CategoryPieChart = ({ categoryData = [], loading = false }) => {
   if (loading) {
     return (
@@ -56,6 +74,7 @@ const CategoryPieChart = ({ categoryData = [], loading = false }) => {
                 outerRadius={80}
                 fill="#8884d8"
                 dataKey="amount"
+                nameKey="category"
               >
                 {categoryData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -65,7 +84,7 @@ const CategoryPieChart = ({ categoryData = [], loading = false }) => {
                 formatter={(value) => `₹${value.toFixed(2)}`}
                 labelFormatter={(label) => `Category: ${label}`}
               />
-              <Legend />
+              <Legend content={renderCustomLegend} />
             </PieChart>
           </ResponsiveContainer>
         </div>
